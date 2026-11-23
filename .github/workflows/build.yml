@@ -1,3 +1,4 @@
+
 name: Build Axel APK
 
 on:
@@ -11,6 +12,12 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+
+      - name: Extract Axel project
+        run: |
+          unzip -o axel-project-v4.zip -d axel-src
+          test -f axel-src/settings.gradle
+          test -f axel-src/app/build.gradle.kts
 
       - uses: actions/setup-java@v4
         with:
@@ -27,9 +34,10 @@ jobs:
           gradle-version: '8.7'
 
       - name: Build debug APK
+        working-directory: axel-src
         run: gradle :app:assembleDebug --no-daemon
 
       - uses: actions/upload-artifact@v4
         with:
           name: axel-apk
-          path: app/build/outputs/apk/debug/*.apk
+          path: axel-src/app/build/outputs/apk/debug/*.apk
